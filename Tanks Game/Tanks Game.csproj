@@ -75,7 +75,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Bombs\PlasticBomb.cs" />
+    <Compile Include="Assets\Scripts\Bombs\TimerBomb.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Medicine.cs" />
     <Compile Include="Assets\Scripts\Tank\Shell\ShellParameters.cs" />
     <Compile Include="Assets\Scripts\Tank\TankHealth.cs" />
     <Compile Include="Assets\Scripts\Tank\TankMovement.cs" />
