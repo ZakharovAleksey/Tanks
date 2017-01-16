@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class TankHealth : MonoBehaviour
 {
-
     public float m_FullHealth = 100f;
     public Slider m_Slider;
     public Image m_FillImage;
@@ -36,17 +35,6 @@ public class TankHealth : MonoBehaviour
         SetHealthUI();
     }
 
-
-    private void FixedUpdate()
-    {
-        m_CurrentHealth -= 1f;
-        SetHealthUI();
-        if (m_CurrentHealth <= 0f && !m_IsDead)
-        {
-            OnDeath();
-        }
-    }
-
     private void SetHealthUI()
     {
         m_Slider.value = m_CurrentHealth;
@@ -75,6 +63,16 @@ public class TankHealth : MonoBehaviour
         {
             OnDeath();
         }
+    }
+
+    public void TakeHeal(float amount)
+    {
+        m_CurrentHealth += amount;
+
+        if (m_CurrentHealth >= 100f)
+            m_CurrentHealth = 100f;
+
+        SetHealthUI();
     }
 
     private void OnDeath()
