@@ -92,13 +92,8 @@ public class CameraController : MonoBehaviour
 
     public void SetStartPositionAndSize()
     {
-        // Find the desired position.
         FindAveragePosition();
-
-        // Set the camera's position to the desired position without damping.
         transform.position = m_DesiredPosition;
-
-        // Find and set the required size of the camera.
         m_Camera.orthographicSize = FindRequiredSize();
     }
 
