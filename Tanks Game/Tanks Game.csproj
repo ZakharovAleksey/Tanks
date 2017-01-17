@@ -87,7 +87,12 @@
     <Compile Include="Assets\Scripts\Tank\TankHealth.cs" />
     <Compile Include="Assets\Scripts\Tank\TankMovement.cs" />
     <Compile Include="Assets\Scripts\Tank\TankShooting.cs" />
+    <Compile Include="Assets\Scripts\UI\GameManager.cs" />
+    <Compile Include="Assets\Scripts\UI\TankManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIDirectionControll.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Fonts\Bowlby_One\OFL.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

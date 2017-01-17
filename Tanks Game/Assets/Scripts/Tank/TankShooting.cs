@@ -6,6 +6,7 @@ public class TankShooting : MonoBehaviour
 {
     public GameObject[] m_ShellPrefabs;
     public Transform m_ShellSpawnPoint;
+    public int m_PlayerID = 1;
 
     private string m_PlayerShootBTN;
     private string m_PlayerChangeShellBTN;
@@ -101,9 +102,8 @@ public class TankShooting : MonoBehaviour
     /// </summary>
     private void SetChoosenShell()
     {
-        
         m_CurShellPrefab = m_ShellPrefabs[m_CurShellID];
-        print(m_CurShellPrefab);
+
         if (m_CurShellID == 1)
             shellParam = m_CurShellPrefab.GetComponent<ExplosiveShellParameters>();
         else

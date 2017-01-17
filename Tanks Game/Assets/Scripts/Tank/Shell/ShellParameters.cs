@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class ShellParameters : MonoBehaviour
 {
     public float m_Damage = 10f;
