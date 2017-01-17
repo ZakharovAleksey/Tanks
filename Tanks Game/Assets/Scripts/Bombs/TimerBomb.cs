@@ -2,28 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimerBomb : MonoBehaviour
+public class TimerBomb : Bomb//: MonoBehaviour
 {
-
-    public float m_Damage = 10f;
-    public float m_TimeToExplosion = 2f;
-    public float m_RespawnTime = 10f;
-    public float m_ExplosionRadius = 500f;
-    public GameObject[] m_Targets;
-    public GameObject m_BombExplosionPrefab;
-
-    private ParticleSystem m_ExplosionParticles;
-    private AudioSource m_ExplosionAudio;
+    public float m_ExplosionRadius = 5f;
+ 
     private bool m_IsActive = false;
-
-
-    private void Awake()
-    {
-        m_ExplosionParticles = Instantiate(m_BombExplosionPrefab).GetComponent<ParticleSystem>();
-        m_ExplosionAudio = m_ExplosionParticles.GetComponent<AudioSource>();
-
-        m_ExplosionParticles.gameObject.SetActive(false);
-    }
 
     // Update is called once per frame
     void Update()
@@ -37,37 +20,21 @@ public class TimerBomb : MonoBehaviour
         }
     }
 
-    // Determines if the player in the eplosion area
-    private bool IsInAffectedArea(GameObject target)
-    {
-        float x = target.transform.position.x;
-        float y = target.transform.position.y;
-
-        // Determines if flayer in circle
-        return Mathf.Pow((x - transform.position.x), 2f) + Mathf.Pow(y - transform.position.y, 2f) < Mathf.Pow(m_ExplosionRadius, 2f) ? true : false;
-    }
-
     // Loop for all players and check if it in explosion area - the hit him, otherwise do nothing
-    private void Explosion()
+    override protected void Explosion()
     {
-        for (int targetID = 0; targetID < m_Targets.Length; ++targetID)
+        Collider[] collisions = Physics.OverlapSphere(transform.position, m_ExplosionRadius);
+
+        for (int colliderID = 0; colliderID < collisions.Length; ++colliderID)
         {
-            if (IsInAffectedArea(m_Targets[targetID]))
+            if (collisions[colliderID].gameObject.CompareTag("Player"))
             {
-                print("set damage");
-                TankHealth th = m_Targets[targetID].GetComponent<TankHealth>();
+                TankHealth th = collisions[colliderID].gameObject.GetComponent<TankHealth>();
                 th.TakeDamage(m_Damage);
             }
         }
 
-        m_ExplosionParticles.transform.position = transform.position;
-        m_ExplosionParticles.gameObject.SetActive(true);
-
-        // Play animation and sound
-        m_ExplosionParticles.Play();
-        m_ExplosionAudio.Play();
-
-        Destroy(gameObject);
+        base.Explosion();
     }
 
     // Checks if player enter the bomb

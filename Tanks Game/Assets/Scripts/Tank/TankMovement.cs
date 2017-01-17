@@ -17,8 +17,6 @@ public class TankMovement : MonoBehaviour
 
     // Можно  добавить степень изменения высоты тона при замедлении/ускорении Audio Clip’а
     
-    
-
     private void Awake()
     {
         m_RigitBody = GetComponent<Rigidbody>();
