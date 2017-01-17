@@ -6,6 +6,7 @@ public class TankShooting : MonoBehaviour
 {
     public GameObject[] m_ShellPrefabs;
     public Transform m_ShellSpawnPoint;
+    public int m_PlayerID = 1;
 
     private string m_PlayerShootBTN;
     private string m_PlayerChangeShellBTN;
@@ -17,10 +18,12 @@ public class TankShooting : MonoBehaviour
     private float m_CurShellShootForce;
     private float m_CurShellRechargeTime;
 
+    //
+    private ShellParameters shellParam;
 
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start ()
     {
         SwitchPlayerID();
         SetChoosenShell();
@@ -101,7 +104,11 @@ public class TankShooting : MonoBehaviour
     {
         m_CurShellPrefab = m_ShellPrefabs[m_CurShellID];
 
-        ShellParameters shellParam = m_CurShellPrefab.GetComponent<ShellParameters>();
+        if (m_CurShellID == 1)
+            shellParam = m_CurShellPrefab.GetComponent<ExplosiveShellParameters>();
+        else
+            shellParam = m_CurShellPrefab.GetComponent<ShellParameters>();
+
         m_CurShellDamage = shellParam.m_Damage;
         m_CurShellShootForce = shellParam.m_ShootForce;
         m_CurShellRechargeTime = shellParam.m_RechargeTime;
