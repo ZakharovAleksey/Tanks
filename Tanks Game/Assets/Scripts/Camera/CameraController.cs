@@ -16,87 +16,6 @@ public class CameraController : MonoBehaviour
     private Vector3 m_MoveVelocity;                 // Reference velocity for the smooth damping of the position.
     private Vector3 m_DesiredPosition;              // The position the camera is moving towards.
 
-    //private void Awake()
-    //{
-    //    m_Camera = GetComponentInChildren<Camera>();
-    //}
-
-    //// Tanks moveing in fixed Update - so the camera mast act with them
-    //private void FixedUpdate()
-    //{
-    //    Move();
-    //    Zoom();
-    //}
-
-    //private void Move()
-    //{
-    //    FindAveragePosition();
-
-    //    transform.position = Vector3.SmoothDamp(transform.position, m_DesiredPosition, ref m_MoveVelocity, m_DampTime);
-    //}
-
-    //// Когда сделаю - переделать для двух игроков
-    //private void FindAveragePosition()
-    //{
-    //    Vector3 averagePos = new Vector3();
-    //    int numTargets = 0;
-
-    //    for (int curTargetID = 0; curTargetID < m_Targets.Length; ++curTargetID)
-    //    {
-    //        if (!m_Targets[curTargetID].gameObject.activeSelf)
-    //            continue;
-
-    //        averagePos += m_Targets[curTargetID].position;
-    //        ++numTargets;
-    //    }
-
-    //    if (numTargets > 0)
-    //        averagePos /= numTargets;
-
-    //    averagePos.y = transform.position.y;
-    //    m_DesiredPosition = averagePos;
-
-    //}
-
-    //private void Zoom()
-    //{
-    //    float requiredSize = FindRequiredSize();
-    //    m_Camera.orthographicSize = Mathf.SmoothDamp(m_Camera.orthographicSize, requiredSize, ref m_ZoomSpeed, m_DampTime);
-    //}
-
-
-    //private float FindRequiredSize()
-    //{
-    //    Vector3 desiredLocalPos = transform.InverseTransformPoint(m_DesiredPosition);
-
-    //    float size = 0f;
-
-    //    for (int curTargetID = 0; curTargetID < m_Targets.Length; ++curTargetID)
-    //    {
-    //        if (!m_Targets[curTargetID].gameObject.activeSelf)
-    //            continue;
-
-    //        Vector3 targetLocalPos = transform.InverseTransformPoint(m_Targets[curTargetID].position);
-    //        Vector3 desiredPosToTarget = targetLocalPos - desiredLocalPos;
-
-    //        size = Mathf.Max(size, Mathf.Abs(desiredPosToTarget.y));
-    //        size = Mathf.Max(size, Mathf.Abs(desiredPosToTarget.x) / m_Camera.aspect);
-    //    }
-
-    //    size += m_ScreenEdgeBuffer;
-    //    size = Mathf.Max(size, m_MinSize);
-
-    //    return size;
-    //}
-
-
-    //public void SetStartPositionAndSize()
-    //{
-    //    FindAveragePosition();
-    //    transform.position = m_DesiredPosition;
-    //    m_Camera.orthographicSize = FindRequiredSize();
-    //}
-
     private void Awake()
     {
         m_Camera = GetComponentInChildren<Camera>();
@@ -145,7 +64,7 @@ public class CameraController : MonoBehaviour
             averagePos /= numTargets;
 
         // Keep the same y value.
-        averagePos.y = transform.position.y;
+        //averagePos.y = transform.position.y;
 
         // The desired position is the average position;
         m_DesiredPosition = averagePos;
@@ -194,7 +113,7 @@ public class CameraController : MonoBehaviour
         // Make sure the camera's size isn't below the minimum.
         size = Mathf.Max(size, m_MinSize);
 
-        return size + 20;
+        return size;
     }
 
 
