@@ -5,7 +5,7 @@ using UnityEngine;
 public class Medicine : MonoBehaviour
 {
     public float m_Heal = 20f;
-    public float m_RespawnTime = 60f;
+    static public float m_RespawnTime = 30f;
     public GameObject m_HealPrepab;
 
     private ParticleSystem m_HealParticleSystem;

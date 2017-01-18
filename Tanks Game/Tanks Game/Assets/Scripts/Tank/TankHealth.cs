@@ -35,6 +35,16 @@ public class TankHealth : MonoBehaviour
         SetHealthUI();
     }
 
+    private void FixedUpdate()
+    {
+        if (transform.position.y <= 7)
+        {
+            m_CurrentHealth = 0f;
+            m_IsDead = true;
+            OnDeath();
+        }
+    }
+
     private void SetHealthUI()
     {
         m_Slider.value = m_CurrentHealth;

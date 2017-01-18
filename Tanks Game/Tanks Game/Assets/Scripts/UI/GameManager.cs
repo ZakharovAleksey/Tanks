@@ -4,27 +4,29 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public int m_NumRoundsToWin = 2;
+    public float m_StartDelay = 3f;
+    public float m_EndDelay = 3f;
+    public CameraController m_CameraControl;
+    public Text m_MessageText;
+    public GameObject m_TankPrefab;
+    public TankManager[] m_Tanks;
+    public GameObject m_Background;
 
-    public int m_NumRoundsToWin = 5;            // The number of rounds a single player has to win to win the game.
-    public float m_StartDelay = 3f;             // The delay between the start of RoundStarting and RoundPlaying phases.
-    public float m_EndDelay = 3f;               // The delay between the end of RoundPlaying and RoundEnding phases.
-    public CameraController m_CameraControl;       // Reference to the CameraControl script for control during different phases.
-    public Text m_MessageText;                  // Reference to the overlay Text to display winning text, etc.
-    public GameObject m_TankPrefab;             // Reference to the prefab the players will control.
-    public TankManager[] m_Tanks;               // A collection of managers for enabling and disabling different aspects of the tanks.
-
-
-    private int m_RoundNumber;                  // Which round the game is currently on.
-    private WaitForSeconds m_StartWait;         // Used to have a delay whilst the round starts.
-    private WaitForSeconds m_EndWait;           // Used to have a delay whilst the round or game ends.
-    private TankManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
+    private int m_RoundNumber;
+    private WaitForSeconds m_StartWait;
+    private WaitForSeconds m_EndWait;
+    private TankManager m_RoundWinner;
     private TankManager m_GameWinner;
+    private SpawnObjects m_SpawnObjectManger;
 
     private void Start()
     {
         // Create the delays so they only have to be made once.
         m_StartWait = new WaitForSeconds(m_StartDelay);
         m_EndWait = new WaitForSeconds(m_EndDelay);
+
+        m_SpawnObjectManger = m_Background.GetComponent<SpawnObjects>();
 
         SpawnAllTanks();
         SetCameraTargets();
@@ -43,7 +45,6 @@ public class GameManager : MonoBehaviour
             m_Tanks[i].Setup();
         }
     }
-
 
     private void SetCameraTargets()
     {
@@ -78,34 +79,27 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator RoundStarting()
     {
-        // As soon as the round starts reset the tanks and make sure they can't move.
         ResetAllTanks();
         DisableTankControl();
 
-        // Snap the camera's zoom and position to something appropriate for the reset tanks.
         m_CameraControl.SetStartPositionAndSize();
 
-        // Increment the round number and display text showing the players what round it is.
         m_RoundNumber++;
         m_MessageText.text = "ROUND " + m_RoundNumber;
 
-        // Wait for the specified length of time until yielding control back to the game loop.
         yield return m_StartWait;
     }
 
 
     private IEnumerator RoundPlaying()
     {
-        // As soon as the round begins playing let the players control the tanks.
+        m_SpawnObjectManger.Set();
         EnableTankControl();
 
-        // Clear the text from the screen.
         m_MessageText.text = string.Empty;
 
-        // While there is not one tank left...
         while (!OneTankLeft())
         {
-            // ... return on the next frame.
             yield return null;
         }
     }
@@ -113,20 +107,16 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator RoundEnding()
     {
-        // Stop tanks from moving.
         DisableTankControl();
+        m_SpawnObjectManger.Remove();
 
-        // Clear the winner from the previous round.
         m_RoundWinner = null;
 
-        // See if there is a winner now the round is over.
         m_RoundWinner = GetRoundWinner();
 
-        // If there is a winner, increment their score.
         if (m_RoundWinner != null)
             m_RoundWinner.m_Wins++;
 
-        // Now the winner's score has been incremented, see if someone has one the game.
         m_GameWinner = GetGameWinner();
 
         // Get a message based on the scores and whether or not there is a game winner and display it.
@@ -137,22 +127,16 @@ public class GameManager : MonoBehaviour
         yield return m_EndWait;
     }
 
-
-    // This is used to check if there is one or fewer tanks remaining and thus the round should end.
     private bool OneTankLeft()
     {
-        // Start the count of tanks left at zero.
         int numTanksLeft = 0;
 
-        // Go through all the tanks...
         for (int i = 0; i < m_Tanks.Length; i++)
         {
-            // ... and if they are active, increment the counter.
             if (m_Tanks[i].m_Instance.activeSelf)
                 numTanksLeft++;
         }
 
-        // If there are one or fewer tanks remaining return true, otherwise return false.
         return numTanksLeft <= 1;
     }
 
@@ -196,7 +180,6 @@ public class GameManager : MonoBehaviour
         // By default when a round ends there are no winners so the default end message is a draw.
         string message = "DRAW!";
 
-        // If there is a winner then change the message to reflect that.
         if (m_RoundWinner != null)
             message = m_RoundWinner.m_ColoredPlayerText + " WINS THE ROUND!";
 
@@ -216,8 +199,6 @@ public class GameManager : MonoBehaviour
         return message;
     }
 
-
-    // This function is used to turn all the tanks back on and reset their positions and properties.
     private void ResetAllTanks()
     {
         for (int i = 0; i < m_Tanks.Length; i++)

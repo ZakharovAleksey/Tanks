@@ -8,7 +8,7 @@ public class Bomb : MonoBehaviour
 {
     public float m_Damage = 10f;
     public float m_TimeToExplosion = 2f;
-    public float m_RespawnTime = 10f;
+    static public float m_RespawnTime = 20f;
     
     public GameObject m_BombExplosionPrefab;
 
