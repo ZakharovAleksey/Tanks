@@ -91,6 +91,7 @@
     <Compile Include="Assets\Scripts\UI\UIDirectionControll.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\BrokenVector\FreeLowPolyPack\readme.txt" />
     <None Include="Assets\Fonts\Bowlby_One\OFL.txt" />
     <None Include="Assets\Sci Fi Assets\Simple SciFi Gun Turret Set\Read Me.txt" />
   </ItemGroup>
