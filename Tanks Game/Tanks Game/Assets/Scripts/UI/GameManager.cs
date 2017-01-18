@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public TankManager[] m_Tanks;
     public GameObject m_Background;
 
+    public Button m_PlayButton;
+
     private int m_RoundNumber;
     private WaitForSeconds m_StartWait;
     private WaitForSeconds m_EndWait;
@@ -28,11 +30,15 @@ public class GameManager : MonoBehaviour
 
         m_SpawnObjectManger = m_Background.GetComponent<SpawnObjects>();
 
+
         SpawnAllTanks();
         SetCameraTargets();
 
         // Once the tanks have been created and the camera is using them as targets, start the game.
-        StartCoroutine(GameLoop());
+        if (m_PlayButton.enabled)
+        {
+            StartCoroutine(GameLoop());
+        }
     }
 
 
