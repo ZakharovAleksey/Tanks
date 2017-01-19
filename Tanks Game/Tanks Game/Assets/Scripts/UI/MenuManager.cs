@@ -5,6 +5,9 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     public GameManager m_GameManager;
+    public GameObject m_MainMenu;
+
+
     public Text m_GameNameText;
 
     public Text m_PlayText;
@@ -26,6 +29,11 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        if (m_MainMenu.transform.FindChild("PlayBTN"))
+        {
+            print("LOL");
+        }
+
         m_PlayText.gameObject.SetActive(true);
         m_QuitText.gameObject.SetActive(true);
 
