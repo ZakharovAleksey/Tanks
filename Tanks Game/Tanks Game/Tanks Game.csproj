@@ -90,6 +90,7 @@
     <Compile Include="Assets\Scripts\Tank\TankShooting.cs" />
     <Compile Include="Assets\Scripts\Turret\TurretMovement.cs" />
     <Compile Include="Assets\Scripts\UI\GameManager.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuManager.cs" />
     <Compile Include="Assets\Scripts\UI\TankManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIDirectionControll.cs" />
   </ItemGroup>
