@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public int m_NumRoundsToWin = 1;
+    public int m_NumRoundsToWin = 5;
     public float m_StartDelay = 3f;
-    public float m_EndDelay = 1f;
+    public float m_EndDelay = 3f;
     public CameraController m_CameraControl;
     public Text m_MessageText;
     public GameObject m_TankPrefab;
@@ -22,13 +22,11 @@ public class GameManager : MonoBehaviour
     private TankManager m_GameWinner;
     private SpawnObjects m_SpawnObjectManger;
 
-    private bool m_ISGameInProcess = false;
-    
 
 
     private void Start()
     {
-        // Create the delays so they only have to be made once.
+        // Это задержки в начале и конце раунда соответственно
         m_StartWait = new WaitForSeconds(m_StartDelay);
         m_EndWait = new WaitForSeconds(m_EndDelay);
 
@@ -40,32 +38,30 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-
-        if (!MenuManager.m_IsGameStarted && !MenuManager.m_IsGameProceed)
+        if (!m_MenuManager.m_IsGameStarting)    // Если игра еще не начата (мы находимся в основном меню)
         {
             DisableTankControl();
             m_CameraControl.SetStartPositionAndSize();
 
-            MenuManager.m_IsGameFinished = false;
+            // Говорим что теперь можно начинать игру
+            m_MenuManager.m_IsGamePlaying = true;
         }
-
-        // If game is started but not in process yet - initilize game
-        if (MenuManager.m_IsGameStarted && !MenuManager.m_IsGameProceed)
+        else if  (m_MenuManager.m_IsGamePlaying)    // Если игра уже начата
         {
             StartCoroutine(GameLoop());
 
-            MenuManager.m_IsGameStarted = false;
-            MenuManager.m_IsGameProceed = true;
+            // Чтобы не заходить в этот цикл каждый раз при Update!
+            m_MenuManager.m_IsGamePlaying = false;
         }
-        
-        if (MenuManager.m_IsGameFinished)
+        else if (m_MenuManager.m_IsGameEnding)     // Если по итогу сыгранных раундов есть победитель
         {
-            m_MenuManager.SetWinMenu();
-
             DisableTankControl();
             m_CameraControl.SetStartPositionAndSize();
-        }
 
+            // Перехордим в пост-игровое меню
+            m_MenuManager.SetEndGameMenu();
+            m_MenuManager.m_IsGameEnding = false;
+        }
     }
 
     private void SpawnAllTanks()
@@ -90,43 +86,17 @@ public class GameManager : MonoBehaviour
         m_CameraControl.m_Targets = targets;
     }
 
-
-    public void StartNewGame()
-    {
-        
-        for (int i = 0; i < m_Tanks.Length; ++i)
-            m_Tanks[i].m_Wins = 0;
-        
-        m_RoundNumber = 0;
-
-        MenuManager.m_IsGameStarted = true;
-        MenuManager.m_IsGameProceed = false;
-
-        MenuManager.m_IsGameFinished = false;
-
-        Update();
-    }
-
     private IEnumerator GameLoop()
     {
         yield return StartCoroutine(RoundStarting());
         yield return StartCoroutine(RoundPlaying());
         yield return StartCoroutine(RoundEnding());
-        
-        if (m_GameWinner != null)
-        {
-            MenuManager.m_IsGameFinished = true;
-            //Application.LoadLevel(Application.loadedLevel);
-        }
-        else
-        {
-            StartCoroutine(GameLoop());
-        }
+
+        PostEnding();
     }
 
     private IEnumerator RoundStarting()
     {
-        print("Start " + m_RoundNumber);
         ResetAllTanks();
         DisableTankControl();
 
@@ -140,10 +110,8 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator RoundPlaying()
     {
-        print("Play " + m_RoundNumber);
-
-        m_SpawnObjectManger.Set();
         EnableTankControl();
+        m_SpawnObjectManger.Spawn();
 
         m_MessageText.text = string.Empty;
 
@@ -155,28 +123,51 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator RoundEnding()
     {
-        print("END " + m_RoundNumber);
 
         DisableTankControl();
         m_SpawnObjectManger.Remove();
-
-        m_RoundWinner = null;
 
         m_RoundWinner = GetRoundWinner();
 
         if (m_RoundWinner != null)
             m_RoundWinner.m_Wins++;
 
-
-        m_GameWinner = GetGameWinner();
-
         // Get a message based on the scores and whether or not there is a game winner and display it.
         string message = EndRoundMessage();
 
         m_MessageText.text = message;
 
-
         yield return m_EndWait;
+    }
+
+    private void PostEnding()
+    {
+        // Стираем предыдущее сообщение о победе
+        m_MessageText.text = "";
+
+        // Определяем есть ли победитель
+        m_GameWinner = GetGameWinner();
+
+        if (m_GameWinner != null)
+            m_MenuManager.m_IsGameEnding = true;
+        else
+            StartCoroutine(GameLoop());
+    }
+
+    public void RestartGame()
+    {
+        // Обнуляем количество выигранных игроками раундов  
+        for (int i = 0; i < m_Tanks.Length; ++i)
+            m_Tanks[i].m_Wins = 0;
+
+        // Говорим что играем заново - первый раунд
+        m_RoundNumber = 0;
+
+        // Необходимо пропустить первый цыкл Update и перйти сразу к игре
+        m_MenuManager.m_IsGamePlaying = true;
+        m_MenuManager.m_IsGameEnding = false;
+
+        Update();
     }
 
 
@@ -218,24 +209,23 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    // Returns a string message to display at the end of each round.
     private string EndRoundMessage()
     {
-        // Default message
         string message = "";
 
         if (m_GameWinner == null)
         {
+            // Если убили друг друга
             message = "DRAWN!";
 
             if (m_RoundWinner != null)
                 message = m_RoundWinner.m_ColoredPlayerText + " WINS THE ROUND!";
 
-            message += "\n\n\n\n";
+            message += "\n\n\n\n\n";
 
             for (int i = 0; i < m_Tanks.Length; i++)
             {
-                message += m_Tanks[i].m_ColoredPlayerText + ": " + m_Tanks[i].m_Wins + " WINS\n";
+                message += m_Tanks[i].m_ColoredPlayerText + " : " + m_Tanks[i].m_Wins + " WINS\n";
             }
         }
 
@@ -244,12 +234,12 @@ public class GameManager : MonoBehaviour
 
     public string EndGameMessage()
     {
-        string winMessage = "";
+        string message = "";
 
         if (m_GameWinner != null)
-            winMessage = m_GameWinner.m_ColoredPlayerText + "\n WINS THE GAME!";
+            message = m_GameWinner.m_ColoredPlayerText + "\n WINS THE GAME!";
 
-        return winMessage;
+        return message;
     }
 
     private void ResetAllTanks()

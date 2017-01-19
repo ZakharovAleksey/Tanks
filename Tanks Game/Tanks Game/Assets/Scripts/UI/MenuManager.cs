@@ -5,113 +5,92 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     public GameManager m_GameManager;
+
     public GameObject m_MainMenu;
-
-
-    public Text m_GameNameText;
-
-    public Text m_PlayText;
-    public Text m_QuitText;
-
     public Canvas m_QuitMenu;
-    private Button m_QuitMenuQuitBTN;
-    private Button m_QuitMenuPlayBTN;
+    public Canvas m_EndGameMenu;
 
-    
-    public Canvas m_WinMenu;
-    public Text m_WinText;
-    private Button m_WinMenuRestartBTN;
-    private Button m_WinMenuQuiteBTN;
+    public Text m_EndGameMessage;
 
-    static public bool m_IsGameStarted = false;
-    static public bool m_IsGameProceed = false;
-    static public bool m_IsGameFinished = false;
+    public bool m_IsGameStarting { get; set; }
+    public bool m_IsGamePlaying { get; set; }
+    public bool m_IsGameEnding { get; set; }
+
 
     private void Start()
     {
-        if (m_MainMenu.transform.FindChild("PlayBTN"))
-        {
-            print("LOL");
-        }
+        m_IsGameStarting = false;
+        m_IsGamePlaying = false;
+        m_IsGameEnding = false;
 
-        m_PlayText.gameObject.SetActive(true);
-        m_QuitText.gameObject.SetActive(true);
-
-        m_QuitMenuQuitBTN = m_QuitText.GetComponent<Button>();
-        m_QuitMenuPlayBTN = m_PlayText.GetComponent<Button>();
-
-
+        // Изначаально только Главное меню активно
+        m_MainMenu.gameObject.SetActive(true);
         m_QuitMenu.gameObject.SetActive(false);
-        m_WinMenu.gameObject.SetActive(false);
+        m_EndGameMenu.gameObject.SetActive(false);
     }
 
-    #region Main Menu
+    #region Main Menu button actions
 
     public void OnPlayBTNClick()
     {
-        m_IsGameStarted = true;
+        m_IsGameStarting = true;
 
-        m_GameNameText.gameObject.SetActive(false);
-        m_QuitMenuQuitBTN.gameObject.SetActive(false);
-        m_QuitMenuPlayBTN.gameObject.SetActive(false);
-
+        m_MainMenu.gameObject.SetActive(false);
         m_QuitMenu.gameObject.SetActive(false);
     }
 
     public void OnQuitBTNClick()
     {
-        m_GameNameText.gameObject.SetActive(false);
+        m_MainMenu.gameObject.SetActive(false);
+        m_EndGameMenu.gameObject.SetActive(false);
 
-        m_QuitMenuQuitBTN.gameObject.SetActive(false);
-        m_QuitMenuPlayBTN.gameObject.SetActive(false);
-        m_WinMenu.gameObject.SetActive(false);
-
-        m_QuitMenu.gameObject.SetActive(true);
-        
+        m_QuitMenu.gameObject.SetActive(true);   
     }
 
     #endregion
 
-    #region Quit Menu
+    #region Quit Menu button actions
 
     public void QuitMenuYesAnswer()
     {
-        print("QUIT GAME!");
         Application.Quit();
     }
 
     public void QuitMenuNoAnswer()
     {
-        m_GameNameText.gameObject.SetActive(true);
-        m_QuitMenuQuitBTN.gameObject.SetActive(true);
-        m_QuitMenuPlayBTN.gameObject.SetActive(true);
-
-        m_QuitMenu.gameObject.SetActive(false);
+        if (m_IsGameStarting)   // При выходе после того как закончился раунд
+        {
+            // Возврящаемся к пост-игровому меню игры
+            m_EndGameMenu.gameObject.SetActive(true);
+            m_QuitMenu.gameObject.SetActive(false);
+        }
+        else // При выходе до начала игры
+        {
+            // Возвращаемся в новое меню
+            m_MainMenu.gameObject.SetActive(true);
+            m_QuitMenu.gameObject.SetActive(false);
+        }
     }
 
     #endregion
 
     #region Win Menu
 
-    public void SetWinMenu()
+    public void SetEndGameMenu()
     {
-        m_WinText.text = m_GameManager.EndGameMessage();
+        // Текст сообщающий цвет игрока одержавшего победу
+        m_EndGameMessage.text = m_GameManager.EndGameMessage();
 
-        m_QuitMenuQuitBTN.gameObject.SetActive(false);
-        m_QuitMenuPlayBTN.gameObject.SetActive(false);
-
-        m_WinMenu.gameObject.SetActive(true);
+        m_EndGameMenu.gameObject.SetActive(true);
+        m_MainMenu.gameObject.SetActive(false);
     }
 
     public void OnRepeatClick()
     {
-        m_QuitMenuQuitBTN.gameObject.SetActive(false);
-        m_QuitMenuPlayBTN.gameObject.SetActive(false);
+        m_MainMenu.gameObject.SetActive(false);
+        m_EndGameMenu.gameObject.SetActive(false);
 
-        m_QuitMenu.gameObject.SetActive(false);
-        m_WinMenu.gameObject.SetActive(false);
-
-        m_GameManager.StartNewGame();
+        m_GameManager.RestartGame();
     }
 
     #endregion

@@ -27,7 +27,7 @@ public class SpawnObjects : MonoBehaviour
     }
 
     // Use this for initialization
-    public void Set()
+    public void Spawn()
     {
         InvokeRepeating("SpawnMedicine", 0f, Medicine.m_RespawnTime);
         InvokeRepeating("SpawnBomb", 0f, Bomb.m_RespawnTime);
