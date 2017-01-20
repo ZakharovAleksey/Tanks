@@ -22,8 +22,6 @@ public class GameManager : MonoBehaviour
     private TankManager m_GameWinner;
     private SpawnObjects m_SpawnObjectManger;
 
-
-
     private void Start()
     {
         // Это задержки в начале и конце раунда соответственно
@@ -46,7 +44,7 @@ public class GameManager : MonoBehaviour
             // Говорим что теперь можно начинать игру
             m_MenuManager.m_IsGamePlaying = true;
         }
-        else if  (m_MenuManager.m_IsGamePlaying)    // Если игра уже начата
+        else if (m_MenuManager.m_IsGamePlaying)    // Если игра уже начата
         {
             StartCoroutine(GameLoop());
 
@@ -61,6 +59,12 @@ public class GameManager : MonoBehaviour
             // Перехордим в пост-игровое меню
             m_MenuManager.SetEndGameMenu();
             m_MenuManager.m_IsGameEnding = false;
+        }
+        else if (m_MenuManager.m_isGameOnPause)
+        {
+            // Придумать как прописать через это место
+            //DisableTankControl();
+            //m_CameraControl.SetStartPositionAndSize();
         }
     }
 
@@ -115,8 +119,18 @@ public class GameManager : MonoBehaviour
 
         m_MessageText.text = string.Empty;
 
+        // Сама игра
         while (!OneTankLeft())
         {
+            if (Input.GetKeyDown("escape") && !m_MenuManager.m_isGameOnPause)   // Если паузы не было и нажали на Esc
+            {
+                m_MenuManager.OnPauseBTNClick();
+            }
+            else if (Input.GetKeyDown("escape") && m_MenuManager.m_isGameOnPause)  // Если была пауза и нажали на Esc
+            {
+                m_MenuManager.OnResumeBTNClick();
+            }
+
             yield return null;
         }
     }
@@ -169,7 +183,6 @@ public class GameManager : MonoBehaviour
 
         Update();
     }
-
 
 
     private bool OneTankLeft()
