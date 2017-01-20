@@ -3,7 +3,7 @@
 
 In this project Tank-shooter game implementation proceeding.
 
-![alt text](PNG/game.png "Game picture")
+![alt text](PNG/game_1.png "Game picture")
 
 At current moment, game has been implemented only for two players (But it is easy to expand number of players). 
 This game has been made as a testing result of my growing skills during GeekBrains [Unity 1](https://geekbrains.ru/courses/90) courses.
@@ -21,27 +21,21 @@ The players begin game on the opposite sides of the map and begin to hunting-dow
 
 When one get damaged it looze hp (Initialy each player has 100 hp) and heat point indicatoe displays current hp using different colors (low hp - red color, middle hp - yellow color, full hp - green color).
 
-For example on the picture below you can see tank with low hp count.
+For example on the picture below you can see two tanks with different hp bar. (blue tank)
 
-![alt text](PNG/hp_low.png)
+![alt text](PNG/hp_show_1.png)
 
 ### Objects
 
-In this game implementation there are some additional objects on the map:
+In this game implementation there are some additional objects you can find on the map.
 
 1. Plastic Bombs - explode immediately when player intersect bob collider damage him on 20 hp (Only to one Player, who activate the bomb). 
 and spawn each 20 sec.
-
-![alt text](PNG/bomb_plastic.png)
-
 2. Timer Bombs - explode after a certain amount of time (by default this time is equal 2 sec) and deals damage to all players in affected area with 10 unity units radius.
 Bombs damage is equal to 10 hp (For all players thouse possition are in affected area) and bomb spawn time is equal to 20 sec.
-
-![alt text](PNG/bomb_timer.png)
-
 3. Medicine - heals player (Only to one Player, who give up the medicine box) on 20 hp and heals and spawns each 30 second on a random position betwen several possible.
 
-![alt text](PNG/medicine.png)
+![alt text](PNG/objects.png)
 
 
 
