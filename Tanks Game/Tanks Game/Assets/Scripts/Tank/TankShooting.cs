@@ -61,7 +61,6 @@ public class TankShooting : MonoBehaviour
 
         if (Input.GetButtonDown(m_PlayerShootBTN) && m_TimeSinceLastShoot >= m_CurShellRechargeTime)
         {
-            print("Cur shell id: = " + m_CurShellID);
             Shoot();
         }
         else if (Input.GetButtonDown(m_PlayerChangeShellBTN) && m_TimeSinceLastShoot >= m_CurShellRechargeTime)

@@ -27,7 +27,7 @@ public class SpawnObjects : MonoBehaviour
     }
 
     // Use this for initialization
-    public void Set()
+    public void Spawn()
     {
         InvokeRepeating("SpawnMedicine", 0f, Medicine.m_RespawnTime);
         InvokeRepeating("SpawnBomb", 0f, Bomb.m_RespawnTime);
@@ -40,10 +40,16 @@ public class SpawnObjects : MonoBehaviour
             m_Turrets[i].SetActive(false);
 
         for (int i = 0; i < m_Bombs.Length; ++i)
-            m_Bombs[i].SetActive(false);
+        {
+            if(m_Bombs[i] != null)
+                m_Bombs[i].SetActive(false);
+        }
 
         for (int i = 0; i < m_Medicine.Length; ++i)
-            m_Medicine[i].SetActive(false);
+        {
+            if (m_Medicine[i] != null)
+                m_Medicine[i].SetActive(false);
+        }
     }
 
     private void SpawnTurrets()
@@ -69,7 +75,6 @@ public class SpawnObjects : MonoBehaviour
 
     private void SpawnBomb()
     {
-        print(m_Bombs);
         for (int i = 0; i < m_BombSpawnPoints.Length; ++i)
         {
             if (m_Bombs[i] == null || !m_Bombs[i].activeSelf)
